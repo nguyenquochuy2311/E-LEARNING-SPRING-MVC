@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Order">
+
+	<resultMap type="order" id="orderMap">
+		<id property="id" column="id"/>
+		<result property="dueMount" column="due_mount"/>
+		<result property="orderDate" column="order_date"/>
+		<result property="invoiceNo" column="invoice_no"/>
+		<result property="pstatus" column="status"/> 
+		<association 
+				property="studentId"
+				column="student_id"
+				select="Student.selectStudentById"/>
+		<association
+				property="courseId"
+				column="course_id"
+				select="Course.selectCourseById"/>
+		<association
+				property="bookId"
+				column="book_id"
+				select="Book.selectBookById"/>										
+	</resultMap>
+		
+	<insert id="insert" parameterType="Order">
+		INSERT INTO student_orders
+		(due_mount, invoice_no, status, student_id, course_id, book_id)
+		VALUES (#{dueMount}, #{invoiceNo}, #{status}, 
+								#{studentId.id}, #{courseId.id}, #{bookId.id})
+	</insert>
+	
+	<select id="selectPaymentOrder" parameterType="student" resultMap="orderMap">
+	<![CDATA[
+		SELECT o.id, due_mount, order_date, p.status, p.invoice_no, o.student_id, o.course_id, o.book_id
+		FROM student_orders o JOIN payments p
+		WHERE o.student_id=#{id} AND o.invoice_no=p.invoice_no
+		]]>	
+		
+	</select>
+	<select id="selectadminlist" parameterType="student" resultMap="orderMap">
+	<![CDATA[
+		SELECT o.id, due_mount, order_date, p.status, p.invoice_no, o.student_id, o.course_id, o.book_id
+		FROM student_orders o JOIN payments p
+		WHERE o.invoice_no =p.invoice_no
+		]]>	
+		
+	</select>
+	
+	
+</mapper>

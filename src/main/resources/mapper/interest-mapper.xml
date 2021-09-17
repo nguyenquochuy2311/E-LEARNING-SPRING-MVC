@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Interest">
+<!-- @author Minh Hieu -->
+
+	<resultMap type="interest" id="interestMap">
+		<id property="id" column="ID" />
+		<result property="experience" column="EXPERIENCE" />
+		<result property="salary" column="SALARY" />
+		<result property="workplaces" column="WORKPLACES" />
+		
+		<association property="studentId"
+					column="STUDENT_ID"
+					select="Student.selectOne"/>
+		
+		<association property="categoryId"
+					column="CAT_ID"
+					select="Category.selectCatById"/>					
+		
+	</resultMap>
+
+
+	<select id="updateInterest" parameterType="interest">
+		UPDATE interest SET cat_id=#{catId}, experience=#{experience}, salary=#{salary}, workplaces=#{workplaces}
+		WHERE student_id=#{stuId}
+	</select>
+
+	<select id="selectListByStuId" parameterType="interest" resultMap="interestMap">
+		select * from interest WHERE student_id=#{stuId}
+	</select>
+
+
+</mapper>

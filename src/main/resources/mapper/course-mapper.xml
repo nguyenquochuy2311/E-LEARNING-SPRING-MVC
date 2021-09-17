@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Course">
+
+	<!-- @author Dang Vinh -->
+	<resultMap type="course" id="courseMap">
+		<id property="id" column="ID" />
+		<result property="title" column="title" />
+		<result property="des" column="des" />
+		<result property="price" column="price" />
+		<result property="image" column="image" />
+		<!-- <result property="categoryId" column="cat_id"/> -->
+		<result property="adminId" column="aid" />
+		<result property="status" column="status" />
+		<result property="createDate" column="create_date" />
+		<association property="teacher" column="teacher_id"
+			select="Teacher.getTeacherById" />
+		<association property="category" column="cat_id"
+			select="Category.getCourseCatOne" />
+
+		<!-- @author NGOCHAI -->
+		<collection property="listTeacher" javaType="list"
+			ofType="teacher">
+			<result property="id" column="tid" />
+			<result property="firstName" column="tfirst_name" />
+		</collection>
+		<!-- @author NGOCHAI -->
+		<collection property="listStudent" javaType="list"
+			ofType="student">
+			<result property="id" column="sid" />
+			<result property="firstName" column="sfirst_name" />
+			<result property="lastName" column="slast_name" />
+			<result property="address" column="saddress" />
+			<result property="email" column="semail" />
+			<result property="phoneNumber" column="sphonenumber" />
+			<result property="image" column="simage" />
+			<result property="createDate" column="screateDate" />
+		</collection>
+
+		<!-- @author Quoc Huy -->
+		<collection 
+				property="notice"
+				column="ID"
+				select="Notice.getNoticeById"
+		/>
+		<collection
+				property="reference"
+				column="ID"
+				select="Ref.getRefById"
+		/>
+		<collection
+				property="book"
+				column="ID"
+				select="Book.getBookByCourse"
+		/>
+	</resultMap>
+
+	<!-- @author Dang Vinh -->
+	<resultMap type="join" id="joinMap">
+		<id property="id" column="id" />
+		<result property="courseId" column="course_id" />
+		<result property="title" column="title" />
+		<result property="des" column="des" />
+		<result property="price" column="price" />
+		<result property="image" column="image" />
+		<!-- <result property="categoryId" column="cat_id"/> -->
+		<result property="adminId" column="aid" />
+		<result property="status" column="status" />
+		<result property="createDate" column="create_date" />
+		<result property="registerDate" column="register_date" />
+		<association property="teacher" column="teacher_id"
+			select="Teacher.getTeacherById" />
+	</resultMap>
+
+	<!-- @author Dang Vinh -->
+	<resultMap type="lesson" id="lessonMap">
+		<id property="id" column="lesson_id"/>
+		<result property="title" column="title"/>
+		<result property="video" column="video"/>
+		<result property="lengths" column="lengths"/>
+		<result property="createDate" column="create_date"/>
+		<result property="des" column="des"/>
+		<association property="progress" javaType="progress">
+			<id property="id" column="progress_id"/>
+			<result property="status" column="progress_status"/>
+			<result property="progress" column="progress"/>					
+			<result property="lastDate" column="last_date"/> 
+		</association>
+	</resultMap>
+
+	<!-- @author Dang Vinh -->
+	<resultMap type="notice" id="noticeMap">
+		<id property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="content" column="content" />
+		<!-- <result property="courseId" column="course_id"/> -->
+		<result property="createDate" column="create_date" />
+	</resultMap>
+
+	<!-- @author Dang Vinh -->
+	<resultMap type="ref" id="refMap">
+		<id property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="des" column="des" />
+		<result property="file" column="file" />
+		<!-- <result property="courseId" column="course_id"/> -->
+		<result property="createDate" column="create_date" />
+	</resultMap>
+
+	<!-- @author Dang Vinh -->
+	<select id="getListByStudent" parameterType="Integer"
+		resultMap="joinMap">
+		<![CDATA[
+			SELECT * FROM joined, course WHERE joined.student_id=#{id} AND joined.course_id=course.id 
+		]]>
+	</select>
+	<select id="selectOne" parameterType="course"
+		resultMap="courseMap">
+		<![CDATA[
+			SELECT * FROM course WHERE id=#{id}
+		]]>
+	</select>
+
+	<select id="selectListLesson" parameterType="int"
+		resultMap="lessonMap">
+		<![CDATA[
+			SELECT a.join_id, a.lesson_id, title, video, lengths, des, progress.id AS progress_id, progress.status AS progress_status, 
+			progress, last_date FROM (SELECT joined.id AS join_id, lesson.id AS lesson_id, title, video, lengths, des, 
+			status  FROM joined, lesson WHERE joined.id=#{id} AND joined.course_id=lesson.course_id AND STATUS=1) a 
+			LEFT JOIN progress ON a.join_id=progress.join_id AND a.lesson_id=progress.lesson_id
+		]]>
+	</select>
+
+	<select id="selectListNotice" parameterType="int"
+		resultMap="noticeMap">
+		<![CDATA[
+			SELECT * FROM notice WHERE course_id=#{id}
+		]]>
+	</select>
+
+	<select id="selectListRef" parameterType="int"
+		resultMap="refMap">
+		<![CDATA[
+			SELECT * FROM reference WHERE course_id=#{id}
+		]]>
+	</select>
+	
+	<select id="selectSumProcess" parameterType="int" resultType="int">
+		<![CDATA[
+			SELECT sum_process FROM joined WHERE id=#{id}
+		]]>
+	</select>
+	
+	<update id="updateSumProcess" parameterType="join">
+		<![CDATA[
+			UPDATE joined SET sum_process=#{sumProcess} WHERE id=#{id}
+		]]>
+	</update>
+
+	<!-- @author Quoc Huy - Select Course By Category -->
+	<select id="selectCourseByCat" parameterType="Integer"
+		resultMap="courseMap">
+		<![CDATA[
+			SELECT * FROM course, category WHERE course.cat_id=category.id AND course.cat_id=#{id} limit 0,4
+		]]>
+	</select>
+
+	<select id="selectCourseByTeacher" parameterType="Integer"
+		resultMap="courseMap">
+		SELECT *
+		FROM course JOIN teacher
+		WHERE
+		course.teacher_id=teacher.id AND teacher.id=#{id}
+	</select>
+
+	<select id="selectList" parameterType="course"
+		resultMap="courseMap">
+		SELECT * FROM course
+	</select>
+	
+	<!-- @author Minh Hieu - Select Page -->
+	<select id="selectPage" parameterType="course"
+		resultMap="courseMap">
+		<![CDATA[
+			SELECT * FROM course, category WHERE course.cat_id=category.id AND course.cat_id=#{id} limit #{pageId},#{total}
+		]]>
+	</select>
+	
+	<select id="selectCountCourseCat" parameterType="course" resultType="Integer" >
+		SELECT COUNT(*) FROM course WHERE cat_id=#{id}	
+	</select>
+
+	<!-- @author NGOCHAI -->
+	<select id="getAllcourses" parameterType="student"
+		resultMap="courseMap">
+		SELECT course.id as id,course.title AS
+		title,teacher.first_name AS
+		tfirst_name,student.first_name AS
+		sfirst_name ,teacher.id AS
+		tid,student.id AS sid FROM course LEFT JOIN
+		joined ON
+		course_id=course.id
+		LEFT JOIN teacher ON
+		course.teacher_id=teacher.id LEFT JOIN student ON
+		student.id=joined.student_id
+	</select>
+
+	<!-- @author NGOCHAI -->
+	<select id="adminselectCourseByTeacher" parameterType="course"
+		resultMap="courseMap">
+		SELECT c.id AS id,c.title AS title,s.id AS
+		sid
+		,s.first_name
+		AS sfirst_name
+		FROM course AS c left JOIN joined AS j ON
+		j.course_id=c.id left JOIN
+		student AS s ON s.id=j.student_id
+		WHERE
+		c.teacher_id=#{id}
+
+	</select>
+	<!-- @author NGOCHAI -->
+	<select id="selectByStudent" parameterType="course"
+		resultMap="courseMap">
+		SELECT c.id as id,c.title AS
+		title,t.first_name AS
+		tfirst_name,s.first_name AS
+		sfirst_name ,t.id AS
+		tid,s.id AS sid
+
+		FROM
+		course AS c left JOIN teacher AS t
+		ON
+		t.id=c.teacher_id
+		left JOIN joined
+		AS j ON j.course_id=c.id left JOIN
+		student AS s ON
+		s.id=j.student_id
+		WHERE s.id=#{id}
+	</select>
+	<!-- @author NGOCHAI -->
+	<select id="selectCourseStudentTeacher" parameterType="course"
+		resultMap="courseMap">
+
+		SELECT c.id as id,c.title AS
+		title,t.first_name AS
+		tfirst_name,s.first_name AS
+		sfirst_name ,t.id AS
+		tid,s.id AS sid
+		FROM
+		course AS c LEFT JOIN teacher
+		AS t ON c.teacher_id=t.id LEFT JOIN
+		joined AS j ON c.id=j.course_id
+		LEFT JOIN student AS s ON
+		s.id=j.student_id
+
+
+	</select>
+	<!-- @author NGOCHAI -->
+	<select id="adminselectOne" parameterType="course"
+		resultMap="courseMap">
+			SELECT c.id as id,c.title AS
+		title,s.first_name AS
+		sfirst_name,s.last_name AS
+		slast_name ,t.id AS
+		tid,s.id AS sid,
+		c.create_date AS create_date,
+		c.price AS price,
+		s.address AS saddress,
+		s.phone_number AS sphonenumber,
+		s.email AS semail,
+		s.image AS simage,
+		s.create_date AS screatedate,
+		t.first_name as tfirst_name
+		
+		
+		
+		FROM
+		course AS c LEFT JOIN teacher
+		AS t ON c.teacher_id=t.id LEFT JOIN
+		joined AS j ON c.id=j.course_id
+		LEFT JOIN student AS s ON
+		s.id=j.student_id WHERE
+		c.id=#{id}
+	</select>
+
+	<!-- @author NGOCHAI -->
+	<insert id="admininsert" parameterType="course">
+		INSERT INTO `course`
+		(`title`, `des`, `price`, `image`, `cat_id`, `teacher_id`, `status`)
+		VALUES
+		(#{title}, #{des}, #{price}, #{image}, #{categoryId},
+		#{teacherId},
+		'1');
+	</insert>
+	<update id="adminupdate" parameterType="course">
+		UPDATE course SET
+		title=#{title}, image=#{image}, des=#{des}
+		,cat_id=#{categoryId}
+		,teacher_id=#{teacherId}
+		WHERE id=#{id}
+	</update>
+	<!-- @author NGOCHAI -->
+	<select id="selectCount" parameterType="course"
+		resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM course
+
+
+	</select>
+	<delete id="admindeletecourse"  parameterType="course">
+		DELETE course,joined FROM course left join joined ON course.id=joined.course_id WHERE course.id=#{id}
+	</delete>
+	
+	<!-- @author Quoc Huy -->
+	<update id="update" parameterType="course">
+		UPDATE course SET title=#{title}, price=#{price}, image=#{image} 
+		WHERE id=#{id} 
+	</update>
+	<select id="selectCourseById" parameterType="Integer" resultMap="courseMap">
+		SELECT * 
+		FROM course
+		WHERE id=#{id}
+	</select>
+	<insert id="insertJoin" parameterType="Join">
+		INSERT INTO joined (student_id, course_id) VALUES (#{studentId}, #{courseId})
+	</insert>
+	<select id="selectJoinOne" parameterType="Map" resultMap="joinMap">
+		<![CDATA[
+			SELECT * FROM joined WHERE student_id=#{student_id} AND course_id=#{course_id}
+		]]>
+	</select>
+	
+	<!-- @author KhaiPhan -->
+	<select id="selectListCourse" parameterType="course" resultMap="courseMap">
+		SELECT * FROM course
+	</select>
+		
+	
+</mapper>

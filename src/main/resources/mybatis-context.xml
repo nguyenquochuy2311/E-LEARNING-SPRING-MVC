@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+					"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- Alias of Type -->
+	<typeAliases>
+		<typeAlias alias="admin" type="com.coeding.spring.vo.Admin"/>
+		<typeAlias alias="teacher" type="com.coeding.spring.vo.Teacher"/>
+		<typeAlias alias="student" type="com.coeding.spring.vo.Student"/>
+		<typeAlias alias="course" type="com.coeding.spring.vo.Course"/>
+		<typeAlias alias="book" type="com.coeding.spring.vo.Book"/>
+		<typeAlias alias="job" type="com.coeding.spring.vo.Job"/>
+		<typeAlias alias="interest" type="com.coeding.spring.vo.Interest"/>
+		<typeAlias alias="candidate" type="com.coeding.spring.vo.Candidate"/>
+		<typeAlias alias="certificate" type="com.coeding.spring.vo.Certificate"/>
+		<typeAlias alias="business" type="com.coeding.spring.vo.Business"/>
+		<typeAlias alias="admin" type="com.coeding.spring.vo.Admin"/>
+		<typeAlias alias="payment" type="com.coeding.spring.vo.PaymentVO"/>
+		<typeAlias alias="category" type="com.coeding.spring.vo.Category"/>
+		<typeAlias alias="join" type="com.coeding.spring.vo.Join"/> <!-- new -->
+		<typeAlias alias="lesson" type="com.coeding.spring.vo.Lesson"/>
+		<typeAlias alias="progress" type="com.coeding.spring.vo.Progress"/>
+		<typeAlias alias="notice" type="com.coeding.spring.vo.Notice"/>
+		<typeAlias alias="ref" type="com.coeding.spring.vo.Reference"/>
+		<typeAlias alias="lesson" type="com.coeding.spring.vo.Lesson"/>
+		<typeAlias alias="order" type="com.coeding.spring.vo.StudentOrders"/>
+		<typeAlias alias="feedback" type="com.coeding.spring.vo.Feedback"/>
+		<typeAlias alias="star" type="com.coeding.spring.vo.Star"/>
+		<typeAlias alias="discuss" type="com.coeding.spring.vo.Discuss"/>
+	</typeAliases>		
+	
+	<!-- Mapper (sql statement )list -->
+	<mappers>
+		<mapper resource="mapper/book-mapper.xml"/>
+		<mapper resource="mapper/student-mapper.xml"/>
+		<mapper resource="mapper/teacher-mapper.xml"/>
+		<mapper resource="mapper/course-mapper.xml"/>
+		<mapper resource="mapper/job-mapper.xml"/>
+		<mapper resource="mapper/interest-mapper.xml"/>
+		<mapper resource="mapper/candidate-mapper.xml"/>
+		<mapper resource="mapper/business-mapper.xml"/>
+		<mapper resource="mapper/certificate-mapper.xml"/>
+		<mapper resource="mapper/payment-mapper.xml"/>
+		<mapper resource="mapper/adminhai-mapper.xml"/>
+		<mapper resource="mapper/category-mapper.xml"/>
+		<mapper resource="mapper/lesson-admin.xml"/>
+		<mapper resource="mapper/notification-admin.xml"/>
+		<mapper resource="mapper/notice-mapper.xml" />
+		<mapper resource="mapper/reference-mapper.xml" />
+		<mapper resource="mapper/lesson-mapper.xml" />
+		<mapper resource="mapper/order-mapper.xml"/>
+		<mapper resource="mapper/feedback-mapper.xml"/>
+		<mapper resource="mapper/discuss-mapper.xml"/>
+	</mappers>
+	
+</configuration>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Lesson">
+
+	<select id="getProgress" parameterType="Map" resultType="progress">
+		<![CDATA[
+			SELECT * FROM progress WHERE join_id=#{joinId} AND lesson_id=#{lessonId}
+		]]>	
+	</select>
+	
+	<insert id="insertProgress" parameterType="Map">
+		<![CDATA[
+			INSERT INTO progress (join_id, lesson_id, progress, status) VALUES (#{joinId}, #{lessonId}, #{progress}, #{status})
+		]]>	
+	</insert>
+	
+	<update id="updateProgress" parameterType="Map">
+		<![CDATA[
+			UPDATE progress SET progress=#{progress}, status=#{status} WHERE join_id=#{joinId} AND lesson_id=#{lessonId}
+		]]>	
+	</update>
+		
+</mapper>

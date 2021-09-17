@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Notice">
+
+	<resultMap type="notice" id="noticeMap">
+		<id property="id" column="ID"/>
+		<result property="title" column="TITLE"/>
+		<result property="content" column="CONTENT"/>
+		<result property="createDate" column="CREATE_DATE"/>											
+	</resultMap>
+		
+	<select id="getNoticeById" parameterType="Integer" resultMap="noticeMap">
+		<![CDATA[
+			SELECT *
+			FROM notice JOIN course
+			WHERE notice.course_id = course.id AND course.id=#{id}
+			ORDER BY notice.id DESC
+		]]>	
+	</select>
+		
+	<insert id="insert" parameterType="notice">
+		INSERT INTO notice (title, content, course_id) VALUES (#{title}, #{content}, #{courseId})
+	</insert>	
+</mapper>

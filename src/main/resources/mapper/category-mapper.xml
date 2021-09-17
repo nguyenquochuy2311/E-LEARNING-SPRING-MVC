@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Category">
+	<!-- @author Quoc Huy -->
+	
+	<!-- Get Course Category -->
+	<resultMap type="category" id="courseCatMap">
+		<id property="id" column="ID"/>
+		<result property="title" column="TITLE"/>
+		<result property="des" column="DES"/>
+		<result property="image" column="IMAGE"/>
+		<result property="adminId" column="AID"/>
+		<result property="createDate" column="CREATE_DATE" />
+		<collection 
+				property="listCourse"
+				column="ID"
+				select="Course.selectCourseByCat"
+		/>
+	</resultMap>
+	
+	<!-- @author Minh Hieu -->
+	<select id="getCourseCatList" parameterType="category" resultMap="courseCatMap">
+		<![CDATA[
+		SELECT * FROM category WHERE type=1 limit #{pageId},#{total}
+		]]>
+	</select>	
+	
+	<select id="selectCount" resultType="Integer">
+		SELECT count(*) FROM category WHERE type=1;
+	</select>
+	<!--  -->
+	<select id="getCourseCatOne" parameterType="Integer" resultMap="courseCatMap">
+		<![CDATA[
+		SELECT * FROM category WHERE id=#{id} AND type=1
+		]]>
+	</select>
+	
+	<!-- Get Job Category  -->
+	<resultMap type="category" id="catJobMap">
+		<id property="id" column="ID"/>
+		<result property="title" column="title"/>
+		<result property="des" column="des"/>		
+		<result property="image" column="image"/>
+		<result property="adminId" column="aid"/>
+		<result property="createDate" column="create_date" />
+		<!-- <collection 
+				property="job"
+				column="id"
+				select="Job.selectJobByCat"
+		/> -->
+	</resultMap>
+		
+	<select id="getJobCatList" parameterType="category" resultMap="catJobMap">
+		<![CDATA[
+		SELECT * FROM category WHERE type=#{type}
+		]]>
+	</select>	
+		
+	<select id="selectCatById"  parameterType="category" resultMap="catJobMap">
+		<![CDATA[
+		SELECT * FROM category WHERE id=#{id}
+		]]>
+	</select>	
+		
+	<select id="getCatList"  parameterType="category" resultMap="catJobMap">
+		<![CDATA[
+		SELECT * FROM category where type=1
+		]]>
+	</select>	
+	
+	<select id="delete"  parameterType="category" resultMap="catJobMap">
+		<![CDATA[
+		DELETE FROM category WHERE id=#{id}
+		]]>
+	</select>	
+	
+	<update id="catUpdate"  parameterType="category">
+		<![CDATA[
+		UPDATE category SET title=#{title}, des=#{des}, image=#{image} 
+		WHERE id=#{id}
+		]]>
+	</update>
+	
+	<insert id="adminInsertCategory" parameterType="category">
+		<![CDATA[ 
+			INSERT INTO category (title, des, image,type)	
+			VALUES (#{title} , #{des}, #{image},1)
+		]]>
+	</insert>
+	
+	<select id = "admingetOneCategory" parameterType="category"  resultMap="catJobMap" > 
+			<![CDATA[ 	
+				SELECT * FROM category WHERE id = #{id} 	
+			]]>		
+	</select>
+		
+</mapper>

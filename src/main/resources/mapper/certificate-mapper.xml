@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Certificate">
+
+	<resultMap type="certificate" id="certMap">
+		<id property="id" column="ID"/>
+		<result property="title" column="cert_title"/> 
+		<result property="finishDate" column="finish_date"/>
+			
+		<association property="student" javaType="student">
+			<result property="firstName" column="student_fn"/>
+			<result property="lastName" column="student_ln"/>
+		</association>
+		
+		<association property="course" javaType="course">
+			<result property="title" column="course_title"/> 
+		</association>
+		
+		<association property="teacher" javaType="teacher">
+			<result property="firstName" column="teacher_fn"/>
+			<result property="lastName" column="teacher_ln"/>
+		</association>
+		
+	</resultMap>
+		
+	<select id="selectListByStudent" parameterType="student" resultMap="certMap">
+		<![CDATA[
+			SELECT certificate.id, certificate.title AS cert_title, certificate.finish_date, student.first_name AS student_fn, 
+			student.last_name AS student_ln, course.title AS course_title, teacher.first_name AS teacher_fn, teacher.last_name AS teacher_ln
+			FROM certificate, joined, student, course, teacher
+			WHERE join_id=joined.id AND student_id=1 AND student.id=student_id AND course_id=course.id AND teacher.id=teacher_id
+		]]>	
+	</select>
+	 
+	<select id="selectOne" parameterType="join" resultMap="certMap">
+		<![CDATA[
+			SELECT certificate.id, certificate.title AS cert_title, certificate.finish_date, student.first_name AS student_fn, 
+			student.last_name AS student_ln, course.title AS course_title, teacher.first_name AS teacher_fn, teacher.last_name AS teacher_ln
+			FROM certificate, joined, student, course, teacher
+			WHERE join_id=joined.id AND joined.id=#{id} AND student.id=student_id AND course_id=course.id AND teacher.id=teacher_id
+		]]>	
+	</select>
+	
+	<insert id="insert" parameterType="certificate">
+		<![CDATA[
+			INSERT INTO certificate (title, join_id, status) VALUES (#{title}, #{joinId}, 1)
+		]]>
+	</insert>
+		
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Feedback">
+
+	<resultMap type="feedback" id="feedbackMap">
+		<id property="id" column="ID"/>
+		<result property="studentId" column="student_id"/>
+		<result property="title" column="TITLE"/>
+		<result property="content" column="CONTENT"/>
+		<result property="courseId" column="course_id"/>
+		<result property="star" column="star"/>
+		<result property="createDate" column="CREATE_DATE"/>
+		<association property="student" javaType="student">
+			<id property="id" column="ID"/>
+			<result property="firstName" column="first_name"/>
+			<result property="lastName" column="last_name"/>
+			<result property="image" column="image"/>
+		</association>												
+	</resultMap>
+		
+		
+	<insert id="insert" parameterType="feedback">		
+		INSERT INTO feedback (student_id, title, content, course_id, book_id, star, status) 
+		VALUES (#{studentId}, #{title}, #{content}, #{courseId}, null, #{star}, 1)
+	</insert>
+	
+	<select id="selectList" parameterType="feedback" resultMap="feedbackMap">
+		SELECT * FROM feedback, student WHERE course_id=#{courseId} AND student_id=student.id ORDER BY feedback.create_date DESC
+	</select>
+	
+	<select id="countFeedbackByStar" parameterType="feedback" resultType="star">
+		<![CDATA[
+			SELECT star, COUNT(star) AS count, SUM(star) AS sum FROM feedback WHERE course_id=#{courseId} GROUP BY star
+		]]>
+	</select>	
+		
+</mapper>

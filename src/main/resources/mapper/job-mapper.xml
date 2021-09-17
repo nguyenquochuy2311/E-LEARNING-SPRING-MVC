@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Job">
+
+	<resultMap type="job" id="jobMap">
+		<id property="id" column="ID" />
+		<result property="name" column="NAME" />
+		<result property="des" column="DES" />
+		<result property="status" column="STATUS" />
+		<result property="salary" column="SALARY" />
+		<result property="experience" column="EXPERIENCE" />
+		<result property="requirement" column="REQUIREMENT" />
+		<result property="createDate" column="CREATE_DATE" />
+		<result property="expiryDate" column="EXPIRY_DATE" />
+
+		<association property="businessId" column="BUSINESS_ID"
+			select="Business.selectBusinessById" />
+		<association property="categoryId" column="CAT_ID"
+			select="Category.selectCatById" />
+	</resultMap>
+
+	<select id="selectJobById" parameterType="Integer"
+		resultType="job">
+		select * from job where id=#{id}
+	</select>
+
+	<select id="selectJobByBusId" parameterType="Integer"
+		resultMap="jobMap">
+		select * from job where business_id=#{business_id}
+	</select>
+
+	<select id="selectPage" parameterType="job" resultMap="jobMap">
+		select *
+		from job where status=#{status} limit #{pageId},#{total}
+	</select>
+
+	<select id="selectJobByName" parameterType="String"
+		resultMap="jobMap">
+		select * from job where name like #{name} '__%'
+	</select>
+
+	<select id="selectListByInterest" resultMap="jobMap">
+		SELECT job.id, job.name,job.business_id,job.create_date,job.expiry_date,interest.cat_id
+		FROM job
+		INNER JOIN interest
+		ON job.cat_id = interest.cat_id
+	</select>
+
+	<select id="selectOne" parameterType="job" resultMap="jobMap">
+		select *
+		from job where id=#{id}
+	</select>
+
+	<select id="insertJob" parameterType="job">
+		insert into job (name, des
+		,business_id, cat_id, status , salary, experience, requirement,
+		expiry_date)
+		value (#{name},#{des}, #{busId}, #{catId},
+		#{status},#{salary},#{experience},#{requirement},#{expiryDate})
+	</select>
+
+	<select id="updateJob" parameterType="job">
+		update job SET name=#{name}, des=#{des},cat_id=#{catId},status=#{status},
+		salary=#{salary},
+		experience=#{experience}, requirement=#{requirement}, expiry_date=#{expiryDate} WHERE id=#{id}
+	</select>
+
+	<select id="deleteJob" parameterType="job">
+		delete from job where
+		id=#{id}
+	</select>
+
+	<select id="getListByStudent" parameterType="student"
+		resultMap="jobMap">
+		SELECT * FROM apply, job WHERE student_id=#{id} AND
+		job_id=job.id
+	</select>
+
+	<select id="selectCount" resultType="Integer">
+		SELECT count(business_id)
+		FROM job
+	</select>
+
+	<select id="selectCountJob" parameterType="Integer"
+		resultType="Integer">
+		<![CDATA[
+			SELECT count(business_id) FROM job WHERE business_id=#{business_id}
+		]]>
+	</select>
+
+	<select id="selectExpiration" resultType="Integer">
+		<![CDATA[
+			SELECT COUNT(*) FROM job WHERE (SELECT DATEDIFF(expiry_date, NOW())) < 0 AND business_id=#{business_id}
+		]]>
+	</select>
+
+	<select id="updateExpiry">
+		<![CDATA[
+			update job SET status=#{status} WHERE (SELECT DATEDIFF(expiry_date, NOW())) < 0
+		]]>
+	</select>
+
+	<select id="updateValid">
+		<![CDATA[
+			update job SET status=#{status} WHERE (SELECT DATEDIFF(expiry_date, NOW())) > 0
+		]]>
+	</select>
+
+	<select id="selectValidation" resultType="Integer">
+		<![CDATA[
+			SELECT COUNT(*) FROM job WHERE (SELECT DATEDIFF(expiry_date, NOW())) > 0 AND business_id=#{business_id}
+		]]>
+	</select>
+
+</mapper>
+
+
+

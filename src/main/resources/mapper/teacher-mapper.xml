@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
+>
+
+<mapper namespace="Teacher">	<!-- TeacherDAO -->
+
+	<!-- @author KhaiPhan -->
+	<resultMap type="teacher" id="teacherMap">
+		<id property="id" column="id"></id>
+		<result property="firstName" column="first_name" />
+		<result property="lastName" column="last_name" />
+		<result property="phoneNumber" column="phone_number" />
+		<result property="email" column="email" />
+		<result property="address" column="address" />
+		<result property="image" column="image" />
+		<result property="userName" column="userName" />
+		<result property="password" column="password" />
+		<result property="adminId" column="aid" />
+		<result property="createDate" column="create_date" />
+		<collection property="courseId" column="ID"
+			select="Course.selectCourseByTeacher" />
+	</resultMap>
+
+	<select id="selectOne" parameterType="teacher"
+		resultMap="teacherMap"> 
+			<![CDATA[ 	
+				SELECT * FROM teacher WHERE id = #{id} 	
+			]]>
+	</select>
+
+	<select id="selectList" parameterType="teacher"
+		resultMap="teacherMap">
+			<![CDATA[ 	
+				SELECT * FROM teacher
+			]]>
+	</select>
+
+	<select id="getTeacherById" parameterType="Integer"
+		resultMap="teacherMap">
+		SELECT *
+		FROM teacher
+		WHERE id=#{id}
+	</select>
+
+	<!-- @author Quoc Huy -->
+	<select id="checkLogin" parameterType="teacher"
+		resultMap="teacherMap">
+	<![CDATA[
+		SELECT * 
+		FROM teacher
+		WHERE username=#{userName} AND password=#{password}
+		]]>
+	</select>
+
+	<select id="checkUsername" parameterType="teacher"
+		resultMap="teacherMap">
+	<![CDATA[
+		SELECT * 
+		FROM teacher
+		WHERE username=#{userName}
+		]]>
+	</select>
+
+	<select id="checkEmail" parameterType="teacher"
+		resultMap="teacherMap">
+	<![CDATA[
+		SELECT * 
+		FROM teacher
+		WHERE email=#{email}
+		]]>
+	</select>
+	<!-- End @author Quoc Huy -->
+
+
+
+
+	<!-- @author NGOCHAI -->
+	<select id="selectCount" parameterType="course"
+		resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM teacher
+
+
+	</select>
+	<!-- @author NGOCHAI -->
+	<insert id="admininsert" parameterType="teacher">
+		INSERT INTO `teacher` (
+		`first_name`, `last_name`, `phone_number`, `email`, `address`,
+		`image`, `username`, `password`) VALUES
+		(#{firstName}, #{lastName},
+		#{phoneNumber}, #{email}, #{address}, #{image}, #{userName},
+		#{password});
+	</insert>
+	<!-- @author NGOCHAI -->
+	<select id="adminselectOne" parameterType="teacher"
+		resultType="teacher" resultMap="teacherMap">
+		SELECT * FROM teacher WHERE id=#{id}
+	</select>
+
+	<update id="adminupdate" parameterType="teacher">
+		UPDATE teacher SET
+		FIRST_NAME=#{firstName}, email=#{email}, last_name=#{lastName}
+		,phone_number=#{phoneNumber} ,address=#{address} ,
+		image=#{image},password=#{password}
+		WHERE id=#{id}
+	</update>
+
+	<!-- @author Quoc Huy -->
+	<update id="update" parameterType="teacher">
+		UPDATE teacher SET
+		first_name=#{firstName}, last_name=#{lastName},
+		phone_number=#{phoneNumber}, email=#{email}, address=#{address},
+		username=#{userName},
+		password=#{password}, image=#{image} WHERE id=#{id}
+	</update>
+	<delete id="admindeletetacher" parameterType="teacher">
+		DELETE FROM teacher WHERE id=#{id}
+	</delete>
+</mapper>

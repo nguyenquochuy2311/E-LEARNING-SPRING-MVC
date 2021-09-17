@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Student">
+
+	<!-- @author Dang Vinh -->
+	<resultMap type="student" id="studentMap">
+		<id property="id" column="ID" />
+		<result property="firstName" column="first_name" />
+		<result property="lastName" column="last_name" />
+		<result property="phoneNumber" column="phone_number" />
+		<result property="address" column="address" />
+		<result property="email" column="email" />
+		<result property="userName" column="username" />
+		<result property="password" column="password" />
+		<result property="image" column="image" />
+		<result property="createDate" column="create_date" />
+		<collection property="join" column="id"
+			select="Course.getListByStudent" />
+		<!-- <collection property="payment" column="id" select="Payment.selectListPmtB" 
+			/> -->
+		<collection property="job" column="id"
+			select="Job.getListByStudent" />
+		<collection property="certificate" column="id"
+			select="Certificate.selectListByStudent" />
+
+	</resultMap>
+
+	<!-- @author Dang Vinh -->
+	<select id="selectOne" parameterType="student"
+		resultMap="studentMap">
+		SELECT * FROM student WHERE id=#{id}
+	</select>
+
+	<!-- @author Dang Vinh -->
+	<select id="selectList" parameterType="student"
+		resultMap="studentMap">
+		<![CDATA[
+			SELECT * FROM student
+		]]>
+	</select>
+
+	<!-- @author Dang Vinh -->
+	<update id="update" parameterType="student">
+		UPDATE student SET
+		first_name=#{firstName}, last_name=#{lastName},
+		phone_number=#{phoneNumber}, email=#{email}, address=#{address},
+		username=#{userName},
+		password=#{password}, image=#{image} WHERE id=#{id}
+	</update>
+
+
+	<!-- @author Quoc Huy -->
+	<select id="checkLogin" parameterType="student"
+		resultMap="studentMap">
+	<![CDATA[
+		SELECT * 
+		FROM student
+		WHERE username=#{userName} AND password=#{password}
+		]]>
+	</select>
+
+	<insert id="insert" parameterType="student">
+		INSERT INTO student
+		(first_name, last_name, username, password, email)
+		VALUES (#{firstName}, #{lastName}, #{userName}, #{password}, #{email})
+	</insert>
+
+	<select id="checkUsername" parameterType="student"
+		resultMap="studentMap">
+	<![CDATA[
+		SELECT * 
+		FROM student
+		WHERE username=#{userName}
+		]]>
+	</select>
+
+	<select id="checkEmail" parameterType="student"
+		resultMap="studentMap">
+	<![CDATA[
+		SELECT * 
+		FROM student
+		WHERE email=#{email}
+		]]>
+	</select>
+	<!-- End @author Quoc Huy -->
+	<!-- @author NGOCHAI -->
+	<select id="selectCount" parameterType="student"
+		resultType="java.lang.Integer">
+		SELECT COUNT(*)
+		FROM student
+
+
+	</select>
+	<!-- @author NGOCHAI -->
+	<select id="selectTop5student" resultMap="studentMap">
+		SELECT * FROM student
+		ORDER BY (id) DESC LIMIT 5
+	</select>
+
+
+	<!-- @author NGOCHAI -->
+	<insert id="admininsert" parameterType="student">
+		INSERT INTO `student` (
+		`first_name`, `last_name`, `phone_number`, `email`, `address`,
+		`image`, `username`, `password`) VALUES
+		(#{firstName}, #{lastName},
+		#{phoneNumber}, #{email}, #{address}, #{image}, #{userName},
+		#{password});
+	</insert>
+
+	
+	
+	<delete id="deleteapply" parameterType="student">
+		DELETE FROM apply WHERE apply.student_id=#{id}
+	</delete>
+
+	<delete id="admindelete" parameterType="student">
+		
+	
+	
+		DELETE student,joined FROM student left JOIN joined ON
+		joined.student_id=student.id WHERE student.id=#{id}
+
+	</delete>
+
+	<select id="selectStudentById" parameterType="Integer" resultMap="studentMap">
+		SELECT * 
+		FROM student 
+		WHERE id=#{id}
+	</select>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</mapper>

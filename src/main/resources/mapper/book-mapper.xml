@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Book">
+
+	<!-- @author KhaiPhan -->
+	<resultMap type="book" id="bookMap">
+		<id property="id" column="id"></id>
+		<result property="title" column="title" />
+		<result property="des" column="des" />
+		<result property="image" column="image" />
+		<result property="price" column="price" />
+		<result property="courseId" column="course_id" />
+		<result property="status" column="status" />
+		<result property="adminId" column="aid" />
+		<result property="createDate" column="create_date" />
+		
+		<association property="course" column="course_id"
+			select="Course.selectCourseById" />
+	</resultMap>
+
+	<select id="selectOne" parameterType="book" resultMap="bookMap"> 
+			<![CDATA[ 	
+				SELECT * FROM book WHERE id = #{id} 
+			]]>
+	</select>
+
+	<select id="selectList" parameterType="book" resultMap="bookMap">
+		<!--call setion -->
+			<![CDATA[ 	
+				SELECT * FROM book where status=1
+			]]>
+	</select>
+
+	<select id="search" parameterType="book" resultMap="bookMap">
+		SELECT * FROM
+		book
+		WHERE title LIKE #{%keyword%}
+		OR des LIKE #{%keyword%}
+	</select>
+
+
+
+	<update id="updatebookadmin" parameterType="book">
+
+		UPDATE book SET title=#{title},price=#{price},des=#{des} WHERE id=#{id}
+	</update>
+	<select id="adminselectListcheck" parameterType="book" resultMap="bookMap">
+		<!--call setion -->
+			<![CDATA[ 	
+				SELECT * FROM book where status=0
+			]]>
+	</select>
+	<update id="adminbookyes" parameterType="book">
+		
+		UPDATE book SET STATUS=1 WHERE id=#{id}
+		
+	</update>
+	
+	
+	<delete id="admindeletebook" parameterType="book">
+		DELETE FROM book
+		WHERE id=#{id}
+	</delete>
+	
+	<!-- @author Quoc Huy -->
+	<select id="getBookByCourse" parameterType="Integer" resultMap="bookMap">
+		SELECT * FROM book JOIN course
+		WHERE book.course_id=course.id AND course.id=#{id}
+	</select>
+	
+	<insert id="insert" parameterType="book">
+		INSERT INTO book (title, des, price, image, course_id, status) VALUES (#{title}, #{des}, #{price}, #{image}, #{courseId}, #{status})
+	</insert>
+	<insert id="update" parameterType="book">
+		UPDATE book
+		SET title=#{title}, price=#{price}, des=#{des}, image=#{image}, course_id=#{courseId}
+		WHERE id=#{id}
+	</insert>
+	
+	<select id="selectBookById" parameterType="Integer" resultMap="bookMap">
+		SELECT *
+		FROM book
+		WHERE id=#{id}
+	</select>
+</mapper>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Business">
+	<!-- @author Minh Hieu -->
+	<resultMap type="business" id="businessMap">
+		<id property="id" column="ID"/>
+		<result property="name" column="NAME"/>
+		<result property="des" column="DES"/>
+		<result property="country" column="COUNTRY"/>
+		<result property="phoneNumber" column="PHONE_NUMBER"/>
+		<result property="email" column="EMAIL"/>
+		<result property="image" column="IMAGE"/>
+		<result property="address" column="ADDRESS"/>
+		<result property="createDate" column="CREATE_DATE"/>
+		
+	</resultMap>
+	
+	<select id="selectBusinessById" parameterType="Integer" resultType="business">
+		select * from business where id=#{id}
+	</select>
+	
+	<select id="selectBusinessByName" parameterType="String" resultType="business">
+		select * from business where name like '%' #{name} '%'
+	</select>
+	
+	<select id="selectOne" parameterType="business" resultMap="businessMap">
+		select * from business where id=#{id}
+	</select>
+
+	<select id="selectList" parameterType="business" resultMap="businessMap" >
+		select * from business
+	</select>
+	
+	<select id="insertBusiness" parameterType="business">
+		insert into business (name, des, country, phone_number, email, image, address, username, password, aid)
+		value (#{name}, #{des}, #{country}, #{phoneNumber}, #{email}, #{image}, #{address}, #{userName}, #{password}, #{adminId})
+	</select>
+	
+	<select id="deleteBusiness" parameterType="business">
+		delete from business where id=#{id} 
+	</select>
+	
+	<select id="updateBusiness" parameterType="business">
+		update business SET name=#{name}, des=#{des}, country=#{country}, phone_number=#{phoneNumber}, email=#{email}
+		,image=#{image}, address=#{address} WHERE id=#{id}
+	</select>
+
+	<select id="updatePassword" parameterType="Business">
+		update business set password=#{password} where id=#{id}	
+	</select>
+	
+	<!-- @author Quoc Huy -->
+	<select id="checkLogin" parameterType="business" resultMap="businessMap">
+	<![CDATA[
+		SELECT * 
+		FROM business
+		WHERE username=#{userName} AND password=#{password}
+		]]>
+	</select>
+	
+	<select id="checkUsername" parameterType="business" resultMap="businessMap">
+	<![CDATA[
+		SELECT * 
+		FROM business
+		WHERE username=#{userName}
+		]]>
+	</select>
+	
+</mapper>
